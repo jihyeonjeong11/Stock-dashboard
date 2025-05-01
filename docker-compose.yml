@@ -1,11 +1,11 @@
 version: "3.9"
 services:
-  placeholder-starter:
+  stock-dashboard-next:
     image: postgres
     restart: always
-    container_name: placeholder-starter
+    container_name: stock-dashboard-next
     ports:
-      - 5432:5432
+      - 5429:5432
     environment:
       POSTGRES_PASSWORD: example
       PGDATA: /data/postgres

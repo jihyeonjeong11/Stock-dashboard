@@ -11,12 +11,19 @@ import { getGroupsByUserUseCase } from "@/use-cases/groups";
 import { CreateGroupButton } from "./create-group-button";
 import { GroupCard } from "./group-card";
 import { PageHeader } from "@/components/page-header";
+import { getChartDataAction } from "./actions";
+import PriceCard from "./price-cards";
 
 export default async function DashboardPage() {
   const user = await assertAuthenticated();
+  const data = await getChartDataAction();
 
   const groups = await getGroupsByUserUseCase(user); // check db schema
   const hasGroups = groups.length > 0;
+
+  //if(thereIsNoSelectedCompany)
+  // return find some company stock!
+
   if (!hasGroups) {
     return (
       <div
@@ -58,64 +65,27 @@ export default async function DashboardPage() {
 
   const ownedGroups = groups.filter((group) => group.userId === user.id);
   const memberGroups = groups.filter((group) => group.userId !== user.id);
+
   return (
-    <>
-      <PageHeader>
-        <h1
-          className={cn(
-            pageTitleStyles,
-            "flex justify-between items-center flex-wrap gap-4"
-          )}
-        >
-          Your Groups
-          {hasGroups && <CreateGroupButton />}
-        </h1>
-      </PageHeader>
+    <section className="flex flex-col flex-1">
+      <h1
+        className={cn(
+          pageTitleStyles,
+          "flex justify-between items-center flex-wrap gap-4"
+        )}
+      >
+        Section1: Company name , symbol, logo
+      </h1>
+
       <div className={cn("space-y-8 container mx-auto py-12 min-h-screen")}>
-        <div className="flex justify-between items-center">
-          <h2 className={"text-2xl"}>Groups You Manage</h2>
-        </div>
-
-        {ownedGroups.length === 0 && (
-          <p className="flex gap-8 items-center mt-8 py-4 rounded border dark:bg-gray-800 px-4">
-            You don't manage any groups
-          </p>
-        )}
+        <h1>section2: websocket price</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {ownedGroups.map((group) => (
-            <GroupCard
-              memberCount={group.memberCount.toString()}
-              group={group}
-              key={group.id}
-              buttonText={"Manage Group"}
-            />
-          ))}
+          <PriceCard />
         </div>
 
-        <div className="flex justify-between items-center">
-          <h2 className={"text-2xl"}>Your Other Groups</h2>
-        </div>
-
-        {memberGroups.length === 0 && (
-          <p
-            className={cn(cardStyles, "flex gap-8 items-center mt-8 py-4 px-4")}
-          >
-            You're not part of any groups
-          </p>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {memberGroups.map((group) => (
-            <GroupCard
-              memberCount={group.memberCount.toString()}
-              group={group}
-              key={group.id}
-              buttonText={"View Group"}
-            />
-          ))}
-        </div>
+        <h1>section3: charts I can make with financial info</h1>
       </div>
-    </>
+    </section>
   );
 }

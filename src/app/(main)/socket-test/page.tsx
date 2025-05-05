@@ -1,10 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { pageTitleStyles } from "@/styles/common";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function SocketTestPage() {
@@ -16,14 +12,15 @@ export default function SocketTestPage() {
     //   console.log("hello");
     // }
     // try 1: use vanilla Websocket
+    //http://127.0.0.1:8787/
+    //env.NEXT_PUBLIC_SOCKET_URL
     const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
     socket.addEventListener("open", (e) => {
       setInterval(() => {
-        socket.send("stock");
+        socket.send("MSFT");
       }, 5000);
     });
     socket.addEventListener("message", (event) => {
-      console.log("Message received from server");
       console.log(event.data);
       setMessage(event.data);
       setTimeStamp(`${new Date()}`);

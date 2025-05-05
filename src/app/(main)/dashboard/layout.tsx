@@ -5,5 +5,5 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return <div className="pl-[75px]">{children}</div>;
 }

@@ -11,6 +11,7 @@ export const env = createEnv({
     EMAIL_SERVER_PORT: z.string().min(1),
     EMAIL_SERVER_USER: z.string().min(1),
     EMAIL_SERVER_PASSWORD: z.string().min(1),
+    FINNHUB_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
@@ -29,5 +30,6 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+    FINNHUB_API_KEY: process.env.FINNHUB_API_KEY,
   },
 });

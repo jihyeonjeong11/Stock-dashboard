@@ -1,10 +1,11 @@
 "use client";
 
+import { afterLoginUrl } from "@/app-config";
 import { Button } from "@/components/ui/button";
 import useMediaQuery from "@/hooks/use-media-query";
 import { BookIcon, SearchIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
   const path = usePathname();
@@ -13,11 +14,15 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
 
   if (isMobile) return null;
 
+  if (isLandingPage && isAuthenticated) {
+    redirect(afterLoginUrl);
+  }
+
   return (
     <>
       {!isLandingPage && isAuthenticated && (
         <div className="hidden md:flex items-center gap-2">
-          <Button
+          {/* <Button
             variant={"link"}
             asChild
             className="flex items-center justify-center gap-2"
@@ -45,13 +50,13 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
             <Link href={"/docs"}>
               <BookIcon className="w-4 h-4" /> API Docs
             </Link>
-          </Button>
+          </Button> */}
         </div>
       )}
 
       {(isLandingPage || !isAuthenticated) && (
         <div className="hidden md:flex gap-4">
-          <Button variant={"link"} asChild>
+          {/* <Button variant={"link"} asChild>
             <Link href="/#features">Features</Link>
           </Button>
 
@@ -61,7 +66,7 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
 
           <Button variant={"link"} asChild>
             <Link href={"/browse"}>Browse Groups</Link>
-          </Button>
+          </Button> */}
         </div>
       )}
     </>

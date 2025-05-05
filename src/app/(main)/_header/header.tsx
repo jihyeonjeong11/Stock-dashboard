@@ -16,6 +16,8 @@ import {
 import { Settings2Icon } from "lucide-react";
 import { SignOutItem } from "./sign-out-item";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DashboardSidebar } from "../dashboard/dashboard-sidebar";
+import { DashboardSearchbar } from "../dashboard/dashboard-searchbar";
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -24,6 +26,8 @@ export default async function Header() {
     <div className="px-5 md:px-6">
       <div className="mx-auto flex w-full max-w-7xl py-4 justify-between">
         <div className="flex justify-between gap-10 items-center">
+          {user && <DashboardSidebar />}
+
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/group.jpeg"
@@ -36,6 +40,7 @@ export default async function Header() {
               Placeholder app
             </span>
           </Link>
+          {user && <DashboardSearchbar />}
           <HeaderLinks isAuthenticated={!!user} />
         </div>
         <div className="flex items-center justify-between gap-5">

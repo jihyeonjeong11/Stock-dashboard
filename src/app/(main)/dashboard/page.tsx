@@ -54,10 +54,10 @@ export default async function DashboardPage({
 }) {
   const symbol = (await searchParams).symbol;
 
-  // const [profile] = await Promise.all([
-  //   getProfile(symbol),
-  //   //getFinancial(symbol),
-  // ]);
+  const [profile] = await Promise.all([
+    getProfile(symbol),
+    //getFinancial(symbol),
+  ]);
 
   //if(thereIsNoSelectedCompany)
   // return find some company stock!
@@ -103,19 +103,14 @@ export default async function DashboardPage({
   return (
     <div className="flex flex-col flex-1 ">
       <div className="container flex gap-2 pt-8">
-        <Image
-          src={sampleProfile.logo}
-          width={30}
-          height={30}
-          alt="company logo"
-        />
+        <Image src={profile.logo} width={30} height={30} alt="company logo" />
         <h1
           className={cn(
             pageTitleStyles,
             "flex justify-between items-center flex-wrap gap-4"
           )}
         >
-          {sampleProfile.name}
+          {profile.name}
         </h1>
       </div>
 

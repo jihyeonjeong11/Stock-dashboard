@@ -32,7 +32,7 @@ interface JsonArray extends Array<AnyJson> {}
 const keyToData = {
   c: "Current price",
   d: "Change",
-  dp: "percent change",
+  dp: "Percent change",
   h: "Highest of the day",
   l: "Lowest of the day",
   o: "Open of the day",
@@ -52,41 +52,47 @@ export default function PriceCard() {
   );
   const [timeStamp, setTimeStamp] = useState("");
   useEffect(() => {
-    const json: Record<Keys, AnyJson> = JSON.parse(sample);
-    if (json) {
-      const processedData: Record<Values, AnyJson> = {} as Record<
-        Values,
-        AnyJson
-      >;
+    // const json: Record<Keys, AnyJson> = JSON.parse(sample);
+    // if (json) {
+    //   const processedData: Record<Values, AnyJson> = {} as Record<
+    //     Values,
+    //     AnyJson
+    //   >;
 
-      let key: keyof typeof json;
-      for (key in json) {
-        processedData[keyToData[key]] = json[key];
-      }
-      setMessage(processedData);
-    }
+    //   let key: keyof typeof json;
+    //   for (key in json) {
+    //     if (key === "t") continue;
+    //     processedData[keyToData[key]] = json[key];
+    //   }
+    //   setMessage(processedData);
+    // }
     // todo: advanced websocket logic needed Abort, reconnect and stuff..
 
-    // const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
-    // socket.addEventListener("open", (e) => {
-    //   socket.send(symbol);
-    //   setInterval(() => {
-    //     socket.send(symbol);
-    //   }, 10000);
-    // });
-    // socket.addEventListener("message", (event) => {
-    //   const json: Record<string, AnyJson> = JSON.parse(event.data);
-    //   if (json) {
-    //     const processedData: Record<string, AnyJson> = {};
-    //     const keys = Object.keys(json).filter((e) => e !== "t");
-    //     keys.forEach((e) => {
-    //       processedData[e] = json[e];
-    //     });
-    //     setMessage(processedData);
-    //   }
+    const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
+    socket.addEventListener("open", (e) => {
+      socket.send(symbol);
+      setInterval(() => {
+        socket.send(symbol);
+      }, 10000);
+    });
+    socket.addEventListener("message", (event) => {
+      const json: Record<Keys, AnyJson> = JSON.parse(event.data);
+      if (json) {
+        const processedData: Record<Values, AnyJson> = {} as Record<
+          Values,
+          AnyJson
+        >;
 
-    //   setTimeStamp(`${new Date()}`);
-    // });
+        let key: keyof typeof json;
+        for (key in json) {
+          if (key === "t") continue;
+          processedData[keyToData[key]] = json[key];
+        }
+        setMessage(processedData);
+
+        setTimeStamp(`${new Date()}`);
+      }
+    });
   }, []);
 
   return (
@@ -94,9 +100,13 @@ export default function PriceCard() {
       {Object.entries(message).map(([key, value]) => {
         return (
           <div key={key} className="bg-[#EDEEF2] rounded-lg">
-            <div className="flex flex-col break-words ">
-              <h6 className="">{key}</h6>
-              {typeof value === "number" && <div className="mb-6">{value}</div>}
+            <div className="break-words py-4 px-2">
+              <div className="text-sm text-muted-foreground mb-2 ">{key}</div>
+              {typeof value === "number" && (
+                <h6 className="text-lg font-semibold leading-none tracking-tight mt-1 mb-2">
+                  {value}
+                </h6>
+              )}
             </div>
           </div>
         );

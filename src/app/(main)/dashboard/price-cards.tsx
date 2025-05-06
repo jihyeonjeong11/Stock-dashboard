@@ -22,6 +22,12 @@ import { useEffect, useState } from "react";
 
 const sample =
   '{"c":435.28,"d":9.88,"dp":2.3225,"h":439.44,"l":429.985,"o":431.74,"pc":425.4,"t":1746388800}';
+// https://github.com/microsoft/TypeScript/issues/1897
+type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
+interface JsonMap {
+  [key: string]: AnyJson;
+}
+interface JsonArray extends Array<AnyJson> {}
 
 const keyToData = {
   c: "Current price",
@@ -31,50 +37,71 @@ const keyToData = {
   l: "Lowest of the day",
   o: "Open of the day",
   pc: "Previous close price",
-};
+  t: "TimeStamp",
+} as const;
+type Keys = keyof typeof keyToData;
+
+type Values = (typeof keyToData)[Keys];
 
 export default function PriceCard() {
   const searchParams = useSearchParams();
-  const symbol = searchParams.get("symbol");
+  const symbol = searchParams.get("symbol")!;
 
-  const [message, setMessage] = useState({});
+  const [message, setMessage] = useState<Record<Values, AnyJson>>(
+    {} as Record<Values, AnyJson>
+  );
   const [timeStamp, setTimeStamp] = useState("");
   useEffect(() => {
-    setMessage(JSON.parse(sample));
+    const json: Record<Keys, AnyJson> = JSON.parse(sample);
+    if (json) {
+      const processedData: Record<Values, AnyJson> = {} as Record<
+        Values,
+        AnyJson
+      >;
 
-    // console.log(socket);
-    // if (socket.connected) {
-    //   console.log("hello");
-    // }
-    // try 1: use vanilla Websocket
-    //http://127.0.0.1:8787/websocket
-    //env.NEXT_PUBLIC_SOCKET_URL
-    // // todo: advanced logic needed
+      let key: keyof typeof json;
+      for (key in json) {
+        processedData[keyToData[key]] = json[key];
+      }
+      setMessage(processedData);
+    }
+    // todo: advanced websocket logic needed Abort, reconnect and stuff..
+
     // const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
     // socket.addEventListener("open", (e) => {
+    //   socket.send(symbol);
     //   setInterval(() => {
-    //     socket.send("MSFT");
-    //   }, 5000);
+    //     socket.send(symbol);
+    //   }, 10000);
     // });
     // socket.addEventListener("message", (event) => {
-    //   setMessage(event.data);
+    //   const json: Record<string, AnyJson> = JSON.parse(event.data);
+    //   if (json) {
+    //     const processedData: Record<string, AnyJson> = {};
+    //     const keys = Object.keys(json).filter((e) => e !== "t");
+    //     keys.forEach((e) => {
+    //       processedData[e] = json[e];
+    //     });
+    //     setMessage(processedData);
+    //   }
+
     //   setTimeStamp(`${new Date()}`);
     // });
   }, []);
 
   return (
-    <div>
-      {Object.keys(message).map((e) => {
+    <>
+      {Object.entries(message).map(([key, value]) => {
         return (
-          <article>
-            <div className="p-1 border flex flex-col">
-              <div>{keyToData[e]}</div>
-              <h6 className="mb-6">{message[e]}</h6>
+          <div key={key} className="bg-[#EDEEF2] rounded-lg">
+            <div className="flex flex-col break-words ">
+              <h6 className="">{key}</h6>
+              {typeof value === "number" && <div className="mb-6">{value}</div>}
             </div>
-          </article>
+          </div>
         );
       })}
-    </div>
+    </>
     // <Card className={cn(cardStyles)}>
     //   <CardHeader>
     //     <Image

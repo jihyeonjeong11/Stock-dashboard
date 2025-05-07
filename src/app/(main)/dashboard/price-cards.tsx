@@ -1,24 +1,27 @@
 "use client";
 
-import { getGroupImageUrl } from "@/app/(main)/dashboard/groups/[groupId]/settings/util";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Group } from "@/db/schema";
+// todo: use Card comp
+// import { getGroupImageUrl } from "@/app/(main)/dashboard/groups/[groupId]/settings/util";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
+// import { Group } from "@/db/schema";
+// import { cn } from "@/lib/utils";
+// import { cardStyles } from "@/styles/common";
+// import { UsersIcon } from "lucide-react";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
-import { cn } from "@/lib/utils";
-import { cardStyles } from "@/styles/common";
-import { UsersIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+
 import { useEffect, useState } from "react";
+import { PriceCardSkeleton } from "./_sections/skeletons";
 
 const sample =
   '{"c":435.28,"d":9.88,"dp":2.3225,"h":439.44,"l":429.985,"o":431.74,"pc":425.4,"t":1746388800}';
@@ -43,9 +46,8 @@ type Keys = keyof typeof keyToData;
 
 type Values = (typeof keyToData)[Keys];
 
-export default function PriceCard() {
-  const searchParams = useSearchParams();
-  const symbol = searchParams.get("symbol")!;
+export default function PriceCard({ symbol }: { symbol: string }) {
+  const intervalRef = { current: undefined as undefined | NodeJS.Timeout };
 
   const [message, setMessage] = useState<Record<Values, AnyJson>>(
     {} as Record<Values, AnyJson>
@@ -71,7 +73,7 @@ export default function PriceCard() {
     const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
     socket.addEventListener("open", (e) => {
       socket.send(symbol);
-      setInterval(() => {
+      intervalRef.current = setInterval(() => {
         socket.send(symbol);
       }, 10000);
     });
@@ -93,13 +95,22 @@ export default function PriceCard() {
         setTimeStamp(`${new Date()}`);
       }
     });
-  }, []);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      socket.close();
+    };
+  }, [symbol]);
+
+  if (!message["Change"]) {
+    return <PriceCardSkeleton />;
+  }
 
   return (
     <>
       {Object.entries(message).map(([key, value]) => {
         return (
-          <div key={key} className="bg-[#EDEEF2] rounded-lg">
+          <article key={key} className="bg-[#EDEEF2] rounded-lg">
             <div className="break-words py-4 px-2">
               <div className="text-sm text-muted-foreground mb-2 ">{key}</div>
               {typeof value === "number" && (
@@ -108,34 +119,9 @@ export default function PriceCard() {
                 </h6>
               )}
             </div>
-          </div>
+          </article>
         );
       })}
     </>
-    // <Card className={cn(cardStyles)}>
-    //   <CardHeader>
-    //     <Image
-    //       src={getGroupImageUrl(group)}
-    //       width={200}
-    //       height={200}
-    //       alt="image of the group"
-    //       className="rounded-lg w-full h-[100px] object-cover mb-2"
-    //     />
-    //     <CardTitle className="mb-2">{group.name}</CardTitle>
-    //     <CardDescription className="line-clamp-4 h-20">
-    //       {group.description}
-    //     </CardDescription>
-    //   </CardHeader>
-    //   <CardContent>
-    //     <div className="flex gap-2 justify-center items-center">
-    //       <UsersIcon /> {memberCount} members
-    //     </div>
-    //   </CardContent>
-    //   <CardFooter>
-    //     <Button className="w-full mt-auto" variant="secondary" asChild>
-    //       <Link href={`/dashboard/groups/${group.id}/info`}>{buttonText}</Link>
-    //     </Button>
-    //   </CardFooter>
-    // </Card>
   );
 }

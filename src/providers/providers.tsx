@@ -7,12 +7,13 @@ import { ThemeProvider } from "./theme-provider";
 import { env } from "@/env";
 import { RootProvider } from "fumadocs-ui/provider";
 
-if (typeof window !== "undefined") {
-  posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
-    api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
-    capture_pageview: false,
-  });
-}
+// For user data
+// if (typeof window !== "undefined") {
+//   posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+//     api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
+//     capture_pageview: false,
+//   });
+// }
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -23,7 +24,8 @@ export function Providers({ children }: { children: ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <PostHogProvider client={posthog}>{children}</PostHogProvider>
+        {children}
+        {/* <PostHogProvider client={posthog}>{children}</PostHogProvider> */}
       </ThemeProvider>
     </RootProvider>
   );

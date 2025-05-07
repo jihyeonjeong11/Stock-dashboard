@@ -11,25 +11,20 @@ import { CreateGroupButton } from "./create-group-button";
 import { GroupCard } from "./group-card";
 import { PageHeader } from "@/components/page-header";
 import { getChartDataAction } from "./actions";
-import PriceCard from "./price-cards";
-import { getFinancial, getProfile } from "@/api/finnhub";
+import {
+  getFinancial,
+  getInsiderTrade,
+  getNews,
+  getProfile,
+} from "@/api/finnhub";
 import Image from "next/image";
-
-const sampleProfile = {
-  country: "US",
-  currency: "USD",
-  estimateCurrency: "USD",
-  exchange: "NASDAQ NMS - GLOBAL MARKET",
-  finnhubIndustry: "Technology",
-  ipo: "1986-03-13",
-  logo: "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MSFT.png",
-  marketCapitalization: 3241852.683535778,
-  name: "Microsoft Corp",
-  phone: "14258828080",
-  shareOutstanding: 7433.98,
-  ticker: "MSFT",
-  weburl: "https://www.microsoft.com/en-in/",
-};
+import LineChart from "@/components/charts/line-chart";
+import { Metadata } from "next";
+import { Suspense } from "react";
+import { Profile } from "./_sections/profile";
+import PriceCard from "./price-cards";
+import ScatterChart from "@/components/charts/scatter-chart";
+import { ChartSkeleton, ProfileSkeleton } from "./_sections/skeletons";
 
 export type CompanyProfile = {
   country: string;
@@ -47,18 +42,27 @@ export type CompanyProfile = {
   weburl: string;
 };
 
+export const metadata: Metadata = {
+  title: "stock-dashboard",
+  // Will fill them later or not
+};
+
 export default async function DashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string }>;
 }) {
-  const symbol = (await searchParams).symbol;
+  const { symbol } = await searchParams;
+  // const [profile, news, insiderTrade, financial] = await Promise.all([
+  //   //getProfile(symbol),
+  //   // getNews(symbol),
+  //   // getInsiderTrade(symbol),
+  //   // getFinancial(symbol),
+  // ]);
+  const testProfile = getProfile(symbol);
+  const testFinancial = getFinancial(symbol);
 
-  const [profile] = await Promise.all([
-    getProfile(symbol),
-    //getFinancial(symbol),
-  ]);
-
+  //const { eps, salesPerShare } = financial.series.annual;
   //if(thereIsNoSelectedCompany)
   // return find some company stock!
   // 데모 페이지를 보여줄 수도, 그냥 입력하라고 할 수도 있음.
@@ -101,26 +105,28 @@ export default async function DashboardPage({
     );
   }
   return (
-    <div className="flex flex-col flex-1 ">
-      <div className="container flex gap-2 pt-8">
-        <Image src={profile.logo} width={30} height={30} alt="company logo" />
-        <h1
-          className={cn(
-            pageTitleStyles,
-            "flex justify-between items-center flex-wrap gap-4"
-          )}
-        >
-          {profile.name}
-        </h1>
+    <div className=" min-h-screen">
+      <div className="container flex flex-col">
+        <Suspense fallback={<ProfileSkeleton />}>
+          <Profile profile={testProfile} />
+        </Suspense>
+      </div>
+      <div className="container mt-8 grid md:grid-cols-7 gap-2 sm:grid-cols-1">
+        <PriceCard symbol={symbol} key={symbol} />
       </div>
 
-      <div className={cn("space-y-8 container mx-auto py-12")}>
-        <div className="grid md:grid-cols-7 gap-2 sm:grid-cols-1">
-          <PriceCard />
-        </div>
-
-        <h1>section3: charts I can make with financial info</h1>
-      </div>
+      <section className="container mt-8 flex flex-col md:flex-row gap-4">
+        <Suspense fallback={<ChartSkeleton />}>
+          <ScatterChart financial={testFinancial} title={"Previous Earning"} />
+        </Suspense>
+        <Suspense fallback={<ChartSkeleton />}>
+          <LineChart financial={testFinancial} title={"Financial Metrics"} />
+        </Suspense>
+      </section>
     </div>
   );
+}
+
+function ChartLoading() {
+  return <>loaidng chart</>;
 }

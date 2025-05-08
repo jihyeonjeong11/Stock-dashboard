@@ -23,5 +23,5 @@ export function PriceCardSkeleton() {
 }
 
 export function ChartSkeleton() {
-  return <Skeleton className="rounded-lg w-[300px] h-[300px]" />;
+  return <Skeleton className="rounded-lg w-full h-[300px]" />;
 }

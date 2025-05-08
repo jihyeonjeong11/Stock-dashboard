@@ -4,6 +4,7 @@ import { use, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import useMediaQuery from "@/hooks/use-media-query";
 import { FinnhubFinancialMetric } from "@/api/finnhub/types";
+import { StockCard } from "../ui/stock-card";
 
 // todo: move to dashboard section this is not codebase but usecase
 
@@ -62,11 +63,13 @@ export default function ScatterChart({
   }, [width]);
 
   return (
-    <div
-      className=" flex items-center space-x-9"
-      ref={graphRef}
-      id="scatter-plot"
-      style={{ width: "100%", height: 250, maxWidth: 650 }}
-    ></div>
+    <StockCard>
+      <div
+        className="p-2 flex items-center space-x-9"
+        ref={graphRef}
+        id="scatter-plot"
+        style={{ width: "100%", height: 250, maxWidth: 650 }}
+      ></div>
+    </StockCard>
   );
 }

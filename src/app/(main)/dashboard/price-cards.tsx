@@ -22,6 +22,7 @@ import { env } from "@/env";
 
 import { useEffect, useState } from "react";
 import { PriceCardSkeleton } from "./_sections/skeletons";
+import { StockCard } from "@/components/ui/stock-card";
 
 const sample =
   '{"c":435.28,"d":9.88,"dp":2.3225,"h":439.44,"l":429.985,"o":431.74,"pc":425.4,"t":1746388800}';
@@ -46,6 +47,8 @@ type Keys = keyof typeof keyToData;
 
 type Values = (typeof keyToData)[Keys];
 
+// todo: add status handlers
+
 export default function PriceCard({ symbol }: { symbol: string }) {
   const intervalRef = { current: undefined as undefined | NodeJS.Timeout };
 
@@ -68,7 +71,6 @@ export default function PriceCard({ symbol }: { symbol: string }) {
     //   }
     //   setMessage(processedData);
     // }
-    // todo: advanced websocket logic needed Abort, reconnect and stuff..
 
     const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
     socket.addEventListener("open", (e) => {
@@ -110,7 +112,7 @@ export default function PriceCard({ symbol }: { symbol: string }) {
     <>
       {Object.entries(message).map(([key, value]) => {
         return (
-          <article key={key} className="bg-[#EDEEF2] rounded-lg">
+          <StockCard key={key}>
             <div className="break-words py-4 px-2">
               <div className="text-sm text-muted-foreground mb-2 ">{key}</div>
               {typeof value === "number" && (
@@ -119,7 +121,7 @@ export default function PriceCard({ symbol }: { symbol: string }) {
                 </h6>
               )}
             </div>
-          </article>
+          </StockCard>
         );
       })}
     </>

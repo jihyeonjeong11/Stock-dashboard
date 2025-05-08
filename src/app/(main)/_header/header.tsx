@@ -26,7 +26,7 @@ export default async function Header() {
     <div className="px-5 md:px-6">
       <div className="mx-auto flex w-full max-w-7xl py-4 justify-between">
         <div className="flex justify-between gap-10 items-center">
-          {user && <DashboardSidebar />}
+          {/* {user && <DashboardSidebar />} */}
 
           <Link href="/" className="flex items-center gap-2">
             <Image

@@ -4,6 +4,7 @@ import { use, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import useMediaQuery from "@/hooks/use-media-query";
 import { FinnhubFinancialMetric } from "@/api/finnhub/types";
+import { StockCard } from "../ui/stock-card";
 
 export default function LineChart({
   title,
@@ -39,7 +40,6 @@ export default function LineChart({
       },
       xAxis: {
         type: "category",
-        name: "Timeline",
         data: data.series.annual.salesPerShare.map((d) => d.period),
       },
       yAxis: {
@@ -63,11 +63,13 @@ export default function LineChart({
   }, [width]);
 
   return (
-    <div
-      className="flex items-center space-x-9"
-      ref={graphRef}
-      id="line"
-      style={{ width: "100%", height: 250, maxWidth: 650 }}
-    ></div>
+    <StockCard>
+      <div
+        className="flex items-center space-x-9"
+        ref={graphRef}
+        id="line"
+        style={{ width: "100%", height: 250, maxWidth: 650 }}
+      ></div>
+    </StockCard>
   );
 }

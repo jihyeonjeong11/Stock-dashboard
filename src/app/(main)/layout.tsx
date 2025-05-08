@@ -8,7 +8,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col w-full">
+    <div>
       {appConfig.mode === "live" && <Header />}
       <div>{children}</div>
       {appConfig.mode === "comingSoon" ? null : <Footer />}

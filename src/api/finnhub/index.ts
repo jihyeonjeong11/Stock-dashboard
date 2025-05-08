@@ -2,12 +2,9 @@ import { env } from "@/env";
 import {
   FinnhubCompanyProfile,
   FinnhubFinancialMetric,
-  FinnhubInsider,
-  FinnhubNews,
+  FinnhubInsiderArray,
+  FinnhubNewsArray,
 } from "./types";
-
-// todo: 리스폰스타입 zod까지 하면 좋지만
-// todo: 에러 핸들링
 
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1/";
 
@@ -47,8 +44,8 @@ export async function getFinancial(
   }
 }
 
-export async function getNews(symbol: string): Promise<FinnhubNews | {}> {
-  if (!symbol) return {};
+export async function getNews(symbol: string): Promise<FinnhubNewsArray | []> {
+  if (!symbol) return [];
 
   try {
     const today = new Date();
@@ -64,14 +61,14 @@ export async function getNews(symbol: string): Promise<FinnhubNews | {}> {
     return await resp.json();
   } catch (error) {
     console.error("getNews error:", error);
-    return {};
+    return [];
   }
 }
 
 export async function getInsiderTrade(
   symbol: string
-): Promise<FinnhubInsider | {}> {
-  if (!symbol) return {};
+): Promise<FinnhubInsiderArray | []> {
+  if (!symbol) return [];
   // todo: limit or from&to not working...
   try {
     const resp = await fetch(
@@ -81,6 +78,6 @@ export async function getInsiderTrade(
     return await resp.json();
   } catch (error) {
     console.error("getFinancial error:", error);
-    return {};
+    return [];
   }
 }

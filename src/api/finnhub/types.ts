@@ -35,12 +35,26 @@ export interface FinnhubNews {
   url: string;
 }
 
+export type FinnhubNewsArray = FinnhubNews[];
+
 export interface FinnhubInsider {
-  symbol: string;
-  transactionDate: string;
-  transactionType: string;
-  shares: number;
-  price: number;
+  change: number;
+  currency: string;
+  filingDate: string;
+  id: string;
+  isDerivative: boolean;
   name: string;
-  title: string;
+  share: number;
+  source: string;
+  symbol: string;
+  transactionCode: string;
+  transactionDate: string;
+  transactionPrice: number;
+}
+
+export type FinnhubInsiderArray = FinnhubInsider[];
+
+export interface FinnhubInsiderResp {
+  data: FinnhubInsiderArray;
+  symbol: string;
 }

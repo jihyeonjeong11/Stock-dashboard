@@ -13,8 +13,8 @@ export default function NewsList({
   return (
     <StockCard>
       <ul className="w-full space-y-2">
-        {n.slice(0, 10).map((n) => {
-          return <li>- {n.headline}</li>;
+        {n.slice(0, 10).map((n, i) => {
+          return <li key={"news" + i}>- {n.headline}</li>;
         })}
       </ul>
     </StockCard>

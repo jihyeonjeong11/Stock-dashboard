@@ -104,7 +104,8 @@ export default function PriceCard({ symbol }: { symbol: string }) {
     };
   }, [symbol]);
 
-  if (!message["Change"]) {
+  if (!message) {
+    //if (!message["Change"]) {
     return <PriceCardSkeleton />;
   }
 

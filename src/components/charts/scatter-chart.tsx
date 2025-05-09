@@ -7,6 +7,7 @@ import { FinnhubFinancialMetric } from "@/api/finnhub/types";
 import { StockCard } from "../ui/stock-card";
 
 // todo: move to dashboard section this is not codebase but usecase
+// todo: eChart tree shaking
 
 export default function ScatterChart({
   title,

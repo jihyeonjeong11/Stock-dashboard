@@ -1,6 +1,3 @@
-// Ripoff from card.tsx
-// todo: make sure wrap all dashboard element with it
-
 import * as React from "react";
 
 import { cn } from "@/lib/utils";

@@ -11,9 +11,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.54.2(react@19.0.0))
-      '@next/bundle-analyzer':
-        specifier: ^15.3.2
-        version: 15.3.2
       '@oslojs/crypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -177,6 +174,9 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.2.0
+      '@next/bundle-analyzer':
+        specifier: ^15.3.2
+        version: 15.3.2
       '@types/node':
         specifier: ^20
         version: 20.17.10

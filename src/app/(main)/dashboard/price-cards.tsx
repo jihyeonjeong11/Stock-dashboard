@@ -1,31 +1,12 @@
 "use client";
 
-// todo: use Card comp
-// import { getGroupImageUrl } from "@/app/(main)/dashboard/groups/[groupId]/settings/util";
-// import { Button } from "@/components/ui/button";
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardFooter,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card";
-// import { Group } from "@/db/schema";
-// import { cn } from "@/lib/utils";
-// import { cardStyles } from "@/styles/common";
-// import { UsersIcon } from "lucide-react";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useSearchParams } from "next/navigation";
 import { env } from "@/env";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PriceCardSkeleton } from "./_sections/skeletons";
 import { StockCard } from "@/components/ui/stock-card";
+import useWebsocket from "@/hooks/use-websocket";
 
-const sample =
-  '{"c":435.28,"d":9.88,"dp":2.3225,"h":439.44,"l":429.985,"o":431.74,"pc":425.4,"t":1746388800}';
 // https://github.com/microsoft/TypeScript/issues/1897
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap {
@@ -47,71 +28,27 @@ type Keys = keyof typeof keyToData;
 
 type Values = (typeof keyToData)[Keys];
 
-// todo: add status handlers
-
 export default function PriceCard({ symbol }: { symbol: string }) {
-  const intervalRef = { current: undefined as undefined | NodeJS.Timeout };
-
-  const [message, setMessage] = useState<Record<Values, AnyJson>>(
-    {} as Record<Values, AnyJson>
+  // todo: readyState handler
+  const { lastMessage, sendMessage } = useWebsocket(
+    env.NEXT_PUBLIC_SOCKET_URL,
+    {}
   );
-  const [timeStamp, setTimeStamp] = useState("");
+
   useEffect(() => {
-    // const json: Record<Keys, AnyJson> = JSON.parse(sample);
-    // if (json) {
-    //   const processedData: Record<Values, AnyJson> = {} as Record<
-    //     Values,
-    //     AnyJson
-    //   >;
-
-    //   let key: keyof typeof json;
-    //   for (key in json) {
-    //     if (key === "t") continue;
-    //     processedData[keyToData[key]] = json[key];
-    //   }
-    //   setMessage(processedData);
-    // }
-
-    const socket = new WebSocket(env.NEXT_PUBLIC_SOCKET_URL);
-    socket.addEventListener("open", (e) => {
-      socket.send(symbol);
-      intervalRef.current = setInterval(() => {
-        socket.send(symbol);
-      }, 10000);
-    });
-    socket.addEventListener("message", (event) => {
-      const json: Record<Keys, AnyJson> = JSON.parse(event.data);
-      if (json) {
-        const processedData: Record<Values, AnyJson> = {} as Record<
-          Values,
-          AnyJson
-        >;
-
-        let key: keyof typeof json;
-        for (key in json) {
-          if (key === "t") continue;
-          processedData[keyToData[key]] = json[key];
-        }
-        setMessage(processedData);
-
-        setTimeStamp(`${new Date()}`);
-      }
-    });
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      socket.close();
-    };
+    if (!symbol) return;
+    setInterval(() => {
+      sendMessage(symbol);
+    }, 5000);
   }, [symbol]);
 
-  if (!message) {
-    //if (!message["Change"]) {
+  if (!lastMessage) {
     return <PriceCardSkeleton />;
   }
 
   return (
     <>
-      {Object.entries(message).map(([key, value]) => {
+      {Object.entries(lastMessage).map(([key, value]) => {
         return (
           <StockCard key={key}>
             <div className="break-words py-4 px-2">

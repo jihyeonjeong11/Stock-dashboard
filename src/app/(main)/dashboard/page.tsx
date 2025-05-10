@@ -35,7 +35,7 @@ export type CompanyProfile = {
 
 export const metadata: Metadata = {
   title: "stock-dashboard",
-  // Will fill them later or not
+  // todo: SEO
 };
 
 export default async function DashboardPage({

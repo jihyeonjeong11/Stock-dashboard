@@ -31,7 +31,6 @@ export async function getFinancial(
 ): Promise<FinnhubFinancialMetric | {}> {
   if (!symbol) return {};
 
-  // todo: parameter not determined yet
   try {
     const resp = await fetch(
       `${FINNHUB_BASE_URL}stock/metric?symbol=${symbol}&token=${env.FINNHUB_API_KEY}&metric=all`,
@@ -69,7 +68,7 @@ export async function getInsiderTrade(
   symbol: string
 ): Promise<FinnhubInsiderArray | []> {
   if (!symbol) return [];
-  // todo: limit or from&to not working...
+
   try {
     const resp = await fetch(
       `${FINNHUB_BASE_URL}/stock/insider-transactions?symbol=${symbol}&token=${env.FINNHUB_API_KEY}`,

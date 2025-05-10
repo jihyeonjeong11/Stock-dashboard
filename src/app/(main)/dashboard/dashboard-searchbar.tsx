@@ -43,7 +43,7 @@ export const DashboardSearchbar = () => {
                   <Input
                     {...field}
                     className="w-full"
-                    placeholder="Find your company"
+                    placeholder="type AAPL"
                   />
                 </FormControl>
                 <FormMessage />

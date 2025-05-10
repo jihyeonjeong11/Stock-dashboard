@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useState, useCallback, RefObject } from "react";
 
+// todo: add messageQueue
+
 export enum ReadyState {
   UNINSTANTIATED = -1,
   CONNECTING = 0,
@@ -32,11 +34,11 @@ export const createSocket = (
   setReadyState: (readyState: ReadyState) => void,
   setLastMessage: (e: any) => void,
   reconnectCount: RefObject<number>,
-  startRef: RefObject<() => void>
+  startRef: RefObject<() => void>,
+  reconnectTimeout: RefObject<NodeJS.Timeout | null>
 ) => {
   const socket = new WebSocket(url);
   webSocketRef.current = socket;
-  const reconnectTimeout = useRef<NodeJS.Timeout>(null);
 
   setReadyState(ReadyState.CONNECTING);
   if (!webSocketRef.current) {
@@ -78,16 +80,15 @@ export const createSocket = (
   };
 };
 
-export default function useWebsocket(url: string, options: any) {
+export default function useWebsocket<T = unknown>(url: string, options: any) {
   const [readyState, setReadyState] = useState<ReadyState>(
     ReadyState.UNINSTANTIATED
   );
-  const [lastMessage, setLastMessage] = useState<
-    WebSocketEventMap["message"] | null
-  >(null);
+  const [lastMessage, setLastMessage] = useState<T | null>(null);
   const webSocketRef = useRef<WebSocket | null>(null);
   const startRef = useRef<() => void>(() => void 0);
   const reconnectCount = useRef<number>(0);
+  const reconnectTimeout = useRef<NodeJS.Timeout>(null);
 
   // Todo: can be more generic.
   //const optionsCache = useRef<any>(options);
@@ -114,7 +115,8 @@ export default function useWebsocket(url: string, options: any) {
           setReadyState,
           setLastMessage,
           reconnectCount,
-          startRef
+          startRef,
+          reconnectTimeout
         );
 
         startRef.current = () => {

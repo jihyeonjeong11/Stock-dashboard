@@ -2,7 +2,7 @@
 
 import { env } from "@/env";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PriceCardSkeleton } from "./_sections/skeletons";
 import { StockCard } from "@/components/ui/stock-card";
 import useWebsocket from "@/hooks/use-websocket";
@@ -30,10 +30,13 @@ type Values = (typeof keyToData)[Keys];
 
 export default function PriceCard({ symbol }: { symbol: string }) {
   // todo: readyState handler
-  const { lastMessage, sendMessage } = useWebsocket(
-    env.NEXT_PUBLIC_SOCKET_URL,
-    {}
-  );
+  const { lastMessage, sendMessage, readyState } = useWebsocket<
+    Record<Keys, AnyJson>
+  >(env.NEXT_PUBLIC_SOCKET_URL, {});
+
+  const [processedMessage, setProcessedMessage] = useState<
+    Record<Values, AnyJson>
+  >({} as Record<Values, AnyJson>);
 
   useEffect(() => {
     if (!symbol) return;
@@ -42,13 +45,29 @@ export default function PriceCard({ symbol }: { symbol: string }) {
     }, 5000);
   }, [symbol]);
 
+  useEffect(() => {
+    if (lastMessage) {
+      const processedData: Record<Values, AnyJson> = {} as Record<
+        Values,
+        AnyJson
+      >;
+      let key: keyof typeof lastMessage;
+
+      for (key in lastMessage) {
+        if (key === "t") continue;
+        processedData[keyToData[key]] = lastMessage[key];
+      }
+      setProcessedMessage(processedData);
+    }
+  }, [lastMessage]);
+
   if (!lastMessage) {
     return <PriceCardSkeleton />;
   }
 
   return (
     <>
-      {Object.entries(lastMessage).map(([key, value]) => {
+      {Object.entries(processedMessage).map(([key, value]) => {
         return (
           <StockCard key={key}>
             <div className="break-words py-4 px-2">

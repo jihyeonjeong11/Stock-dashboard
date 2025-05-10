@@ -37,7 +37,7 @@ export default async function Header() {
               className="rounded-full"
             />
             <span className="text-sm md:text-base lg:text-2xl font-bold">
-              Placeholder app
+              Stock Dashboard
             </span>
           </Link>
           {user && <DashboardSearchbar />}

@@ -18,8 +18,9 @@ export default function SignInPage() {
             </p>
           </div>
           <div className="space-y-4">
-            <Link
-              href="/api/login/google"
+            <button
+              onClick={() => alert("Not yet implemented")}
+              //href="/api/login/google"
               className={cn(
                 buttonVariants({
                   variant: "secondary",
@@ -29,7 +30,7 @@ export default function SignInPage() {
             >
               <GoogleIcon className="stroke-white mr-2 h-5 w-5" />
               Sign in with Google
-            </Link>
+            </button>
 
             <div className="relative py-4">
               <div className="absolute inset-0 flex items-center">

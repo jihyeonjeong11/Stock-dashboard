@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Placeholder App",
-  description: "Placeholder service for NextJS showcases",
+  title: "Stock dashboard",
+  description: "Websocket based real-time stock dashboard",
   //openGraph:
 };
 

@@ -117,7 +117,12 @@ export default function EmailPage() {
       </Form>
       <div className="flex justify-center">
         <Button asChild variant="link">
-          <Link href="/sign-in/forgot-password">Forgot Password</Link>
+          <button
+            onClick={() => alert("Not yet implemented.")}
+            //href="/sign-in/forgot-password"
+          >
+            Forgot Password
+          </button>
         </Button>
       </div>
 

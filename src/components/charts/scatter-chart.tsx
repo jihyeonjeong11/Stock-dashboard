@@ -21,7 +21,6 @@ export default function ScatterChart({
   const graphInstance = useRef<echarts.ECharts | null>(null);
   const { width } = useMediaQuery();
 
-  // re-render when props change
   useEffect(() => {
     if (!data || !("series" in data) || !data.series?.annual?.eps?.length) {
       return;

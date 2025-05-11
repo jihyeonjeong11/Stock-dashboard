@@ -3,8 +3,9 @@
 import { afterLoginUrl } from "@/app-config";
 import { rateLimitByKey } from "@/lib/limiter";
 import { unauthenticatedAction } from "@/lib/safe-actions";
-import { getCurrentUser, setSession } from "@/lib/session";
+import { setSession } from "@/lib/session";
 import { signInUseCase } from "@/use-cases/users";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -19,7 +20,14 @@ export const signInAction = unauthenticatedAction
   .handler(async ({ input }) => {
     await rateLimitByKey({ key: input.email, limit: 3, window: 10000 });
     const user = await signInUseCase(input.email, input.password);
-    await setSession(user.id); // need fix check ai-chatbot code
-    await getCurrentUser();
-    redirect(afterLoginUrl);
+    const { token, expiresAt } = await setSession(user.id);
+    const allCookies = await cookies();
+    await allCookies.set("session", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      expires: expiresAt,
+      path: "/",
+    });
+    await redirect(afterLoginUrl);
   });

@@ -38,10 +38,12 @@ export const getCurrentUser = cache(async () => {
   return user ?? undefined;
 });
 
+// todo: Can call server function outside of action
 export async function setSession(userId: UserId) {
   const token = generateSessionToken();
   const session = await createSession(token, userId);
-  setSessionTokenCookie(token, session.expiresAt);
+  return { token, expiresAt: session.expiresAt };
+  // setSessionTokenCookie(token, session.expiresAt);
 }
 
 export async function getSessionToken(): Promise<string | undefined> {

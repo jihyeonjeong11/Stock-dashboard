@@ -41,6 +41,8 @@ export default function EmailPage() {
 
   const { execute, isPending, error } = useServerAction(signInAction, {
     onError({ err }) {
+      console.error(err);
+      console.log(err);
       toast({
         title: "Something went wrong",
         description: err.message,

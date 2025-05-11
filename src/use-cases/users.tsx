@@ -73,12 +73,12 @@ export async function registerUserUseCase(email: string, password: string) {
   await createProfile(user.id, displayName);
 
   try {
-    const token = await createVerifyEmailToken(user.id);
-    await sendEmail(
-      email,
-      `Verify your email for ${applicationName}`,
-      <VerifyEmail token={token} />
-    );
+    // const token = await createVerifyEmailToken(user.id);
+    // await sendEmail(
+    //   email,
+    //   `Verify your email for ${applicationName}`,
+    //   <VerifyEmail token={token} />
+    // );
   } catch (error) {
     console.error(
       "Verification email would not be sent, did you setup the resend API key?",

@@ -5,6 +5,7 @@ import * as echarts from "echarts";
 import useMediaQuery from "@/hooks/use-media-query";
 import { FinnhubFinancialMetric } from "@/api/finnhub/types";
 import { StockCard } from "../ui/stock-card";
+import { useSearchParams } from "next/navigation";
 
 // todo: move to dashboard section this is not codebase but usecase
 // todo: eChart tree shaking
@@ -16,13 +17,19 @@ export default function ScatterChart({
   title: string;
   financial: Promise<{} | FinnhubFinancialMetric>;
 }) {
+  const symbol = useSearchParams().get("symbol");
   const data = use(financial);
   const graphRef = useRef<HTMLDivElement>(null);
   const graphInstance = useRef<echarts.ECharts | null>(null);
   const { width } = useMediaQuery();
 
   useEffect(() => {
-    if (!data || !("series" in data) || !data.series?.annual?.eps?.length) {
+    if (
+      !data ||
+      typeof data === "string" ||
+      !("series" in data) ||
+      !data.series?.annual?.eps?.length
+    ) {
       return;
     }
 
@@ -56,7 +63,11 @@ export default function ScatterChart({
 
     chart.setOption(option);
     graphInstance.current = chart;
-  }, []);
+
+    return () => {
+      chart.dispose();
+    };
+  }, [symbol]);
 
   useEffect(() => {
     graphInstance.current?.resize();

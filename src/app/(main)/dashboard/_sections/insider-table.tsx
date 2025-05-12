@@ -1,3 +1,4 @@
+"use client";
 import { FinnhubInsiderResp } from "@/api/finnhub/types";
 import { StockCard } from "@/components/ui/stock-card";
 import { use } from "react";
@@ -11,7 +12,7 @@ export function InsiderTable({
 }) {
   const i = use(insiders);
 
-  if (!i || !("data" in i) || !i.data) return;
+  if (!i || typeof i === "string" || !("data" in i) || !i.data) return;
 
   // FILEDAT, TICKER, BUY/SELL, Shares, amount
   // fillingDate, symbol, transactionCode, share, share * transactionPrice
@@ -31,8 +32,11 @@ export function InsiderTable({
             </tr>
           </thead>
           <tbody>
-            {i.data.slice(0, 10).map((tx) => (
-              <tr key={tx.id} className="even:bg-white odd:bg-gray-50">
+            {i.data.slice(0, 10).map((tx, i) => (
+              <tr
+                key={"transaction" + `${i}` + tx.id}
+                className="even:bg-white odd:bg-gray-50"
+              >
                 <td className="px-3 py-2 border">{tx.filingDate}</td>
                 <td className="px-3 py-2 border">{tx.symbol}</td>
                 <td className="px-3 py-2 border">

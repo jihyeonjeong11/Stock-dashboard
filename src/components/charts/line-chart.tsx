@@ -5,6 +5,7 @@ import * as echarts from "echarts";
 import useMediaQuery from "@/hooks/use-media-query";
 import { FinnhubFinancialMetric } from "@/api/finnhub/types";
 import { StockCard } from "../ui/stock-card";
+import { useSearchParams } from "next/navigation";
 
 export default function LineChart({
   title,
@@ -13,14 +14,15 @@ export default function LineChart({
   title: string;
   financial: Promise<FinnhubFinancialMetric | {}>;
 }) {
+  const symbol = useSearchParams().get("symbol");
   const data = use(financial);
   const graphRef = useRef<HTMLDivElement>(null);
   const graphInstance = useRef<echarts.ECharts | null>(null);
   const { width } = useMediaQuery();
-  // re-render when props change
   useEffect(() => {
     if (
       !data ||
+      typeof data === "string" ||
       !("series" in data) ||
       !data.series?.annual?.salesPerShare?.length
     ) {
@@ -56,7 +58,11 @@ export default function LineChart({
 
     chart.setOption(option);
     graphInstance.current = chart;
-  }, []);
+
+    return () => {
+      chart.dispose();
+    };
+  }, [symbol]);
 
   useEffect(() => {
     graphInstance.current?.resize();

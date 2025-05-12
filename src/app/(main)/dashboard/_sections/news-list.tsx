@@ -1,3 +1,5 @@
+"use client";
+
 import { FinnhubNewsArray } from "@/api/finnhub/types";
 import { StockCard } from "@/components/ui/stock-card";
 import { use } from "react";
@@ -8,7 +10,8 @@ export default function NewsList({
   news: Promise<FinnhubNewsArray | []>;
 }) {
   const n = use(news);
-  if (!n || !n.length) return <></>;
+
+  if (!n || typeof n === "string" || !n.length) return <></>;
 
   return (
     <StockCard>
